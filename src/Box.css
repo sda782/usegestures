@@ -3,7 +3,7 @@
     width: 100px;
     height: 100px;
     background-color: transparent;
-    border: 5px solid slategray;
+    border: 5px dotted slategray;
     touch-action: none;
     position: fixed;
 }
@@ -19,14 +19,14 @@
 }
 
 .resizer {
-    bottom: -10px;
-    right: -10px;
+    bottom: -40px;
+    right: -40px;
     cursor: nwse-resize;
 }
 
 .rotater {
-    bottom: -50px;
-    right: -50px;
+    left: calc(50% - 10px);
+    top: -60px;
 }
 
 .centerPoint {

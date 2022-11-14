@@ -3,33 +3,33 @@
     width: 100px;
     height: 100px;
     background-color: transparent;
-    border: 5px dotted slategray;
+    border: 5px solid slategray;
     touch-action: none;
+    position: fixed;
+}
+
+.dot {
     position: absolute;
+    display: block;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: slategray;
+    touch-action: none;
 }
 
 .resizer {
-    position: absolute;
-    display: block;
-    border-radius: 50%;
-    background-color: slategray;
-    width: 20px;
-    height: 20px;
     bottom: -10px;
     right: -10px;
     cursor: nwse-resize;
-    touch-action: none;
 }
 
 .rotater {
-    position: absolute;
-    display: block;
-    border-radius: 50%;
-    background-color: slategray;
-    width: 20px;
-    height: 20px;
     bottom: -50px;
     right: -50px;
-    cursor: nwse-resize;
-    touch-action: none;
+}
+
+.centerPoint {
+    left: 40px;
+    top: 40px;
 }

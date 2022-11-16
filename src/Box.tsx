@@ -1,5 +1,5 @@
 import { useSpring, animated } from '@react-spring/web';
-import { useDrag } from '@use-gesture/react';
+import { useDrag, Vector2 } from '@use-gesture/react';
 import { useRef, useState } from 'react'
 import './Box.css'
 
@@ -9,6 +9,8 @@ function Box() {
     const resizerRef = useRef<HTMLDivElement | null>(null)
     const rotaterRef = useRef<HTMLDivElement | null>(null)
     const selfRef = useRef<HTMLDivElement | null>(null)
+
+    console.log(selfRef)
 
     var boundingBox: DOMRect | undefined;
 
@@ -46,50 +48,60 @@ function Box() {
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('touchmove', handleTouchMove)
 
+    const resize = (offset: Vector2) => {
+        boundingBox = selfRef.current?.getBoundingClientRect()
+        if (boundingBox === undefined) return;
+
+        setCenterPos({
+            x: boundingBox.left + boundingBox.width / 2,
+            y: boundingBox.top + boundingBox.height / 2
+        })
+
+        api.set({
+            width: offset[0],
+            height: offset[1]
+        })
+    }
+
+    const rotate = () => {
+        if (selfRef.current === null) return
+        let angle = (Math.atan2(mousePos.x - centerPos.x, mousePos.y - centerPos.y) * 180) / Math.PI + 180
+
+        api.set({
+            rotateZ: -angle
+        })
+    }
+
+    const move = (offset: Vector2) => {
+        boundingBox = selfRef.current?.getBoundingClientRect()
+        if (boundingBox === undefined) return;
+
+        setCenterPos({
+            x: boundingBox.left + boundingBox.width / 2,
+            y: boundingBox.top + boundingBox.height / 2
+        })
+
+        api.set({
+            x: offset[0],
+            y: offset[1]
+        })
+    }
+
     const bindDrag = useDrag(({ event, offset, tap }) => {
-        if (tap) {
-            setEditmode(!editmode)
-        }
+        console.log(event);
+        if (tap) setEditmode(!editmode)
 
         if (!editmode) return
 
         switch (event.target) {
             case resizerRef.current:
-
-                boundingBox = selfRef.current?.getBoundingClientRect()
-                if (boundingBox === undefined) return;
-
-                setCenterPos({
-                    x: boundingBox.left + boundingBox.width / 2,
-                    y: boundingBox.top + boundingBox.height / 2
-                })
-
-                api.set({
-                    width: offset[0],
-                    height: offset[1]
-                })
+                resize(offset)
                 break;
             case rotaterRef.current:
-                if (selfRef.current === null) return
-                let angle = (Math.atan2(mousePos.x - centerPos.x, mousePos.y - centerPos.y) * 180) / Math.PI + 180
-
-                api.set({
-                    rotateZ: -angle
-                })
+                rotate()
                 break;
             default:
-                boundingBox = selfRef.current?.getBoundingClientRect()
-                if (boundingBox === undefined) return;
-
-                setCenterPos({
-                    x: boundingBox.left + boundingBox.width / 2,
-                    y: boundingBox.top + boundingBox.height / 2
-                })
-
-                api.set({
-                    x: offset[0],
-                    y: offset[1]
-                })
+                move(offset)
         }
 
     }, {
@@ -106,17 +118,15 @@ function Box() {
     })
 
     return (
-        <div>
-            <animated.div id="box" ref={selfRef} {...bindDrag()} style={{ x, y, width, height, rotateZ }} >
-                {editmode
-                    ? <div>
-                        <div className='resizer dot' ref={resizerRef}></div>
-                        <div className='rotater dot' ref={rotaterRef}></div>
-                    </div>
-                    : <div></div>
-                }
-            </animated.div>
-        </div>
+        <animated.div id="box" ref={selfRef} {...bindDrag()} style={{ x, y, width, height, rotateZ }} >
+            {editmode
+                ? <div>
+                    <div className='resizer dot' ref={resizerRef}></div>
+                    <div className='rotater dot' ref={rotaterRef}></div>
+                </div>
+                : <div></div>
+            }
+        </animated.div>
     )
 }
 

@@ -55,6 +55,15 @@ function Box() {
 
         switch (event.target) {
             case resizerRef.current:
+
+                boundingBox = selfRef.current?.getBoundingClientRect()
+                if (boundingBox === undefined) return;
+
+                setCenterPos({
+                    x: boundingBox.left + boundingBox.width / 2,
+                    y: boundingBox.top + boundingBox.height / 2
+                })
+
                 api.set({
                     width: offset[0],
                     height: offset[1]
@@ -106,7 +115,6 @@ function Box() {
                     </div>
                     : <div></div>
                 }
-
             </animated.div>
         </div>
     )
